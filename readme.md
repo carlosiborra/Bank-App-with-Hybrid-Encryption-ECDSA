@@ -10,7 +10,7 @@ Para acceder al entorno virtual, estando dentro de la carpeta backend en el term
 
 Para ejecutar flask: *flask run o python app.py*
 
-
+Código para hacer push si no se detecta el remoto: git push origin HEAD:master
 
 # Links de interés:
 
