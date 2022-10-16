@@ -1,0 +1,97 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto Light";
+    background: url("https://www.wallpaperuse.com/wallp/89-890635_m.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    -webkit-background-size: cover;
+}
+
+p{
+
+    color: rgb(138, 138, 241);
+    text-align: left;
+    padding-left: 5px;
+    font-weight: bold;
+
+}
+
+.mensajes{
+
+    width: 300px;
+    padding: 30px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    text-align: center;
+    border-radius: 25px;
+
+}
+
+.mensajes h1{
+
+    color: rgb(138, 138, 241);
+    font-weight: 700;
+
+}
+
+.mensajes input[type="text"]{
+
+    border: 0;
+    background: none;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 1px solid rgb(36, 70, 64);
+    padding: 14px 10px;
+    width: 220px;
+    outline: none;
+    color: rgb(138, 138, 241);
+    border-radius: 10px;
+    transition: 0.25px;
+
+}
+
+.mensajes input[type="text"]:focus{
+
+    border-color: rgb(39, 182, 173);
+
+}
+
+.mensajes button[type="submit"]{
+
+    border: 0;
+    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeAMq2Mk11GQs5s0TzLzH1NdSeF1Mn99MGFg&usqp=CAU");
+    background-size: 47px;
+    background-repeat: no-repeat;
+
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    border: 1px solid rgb(36, 70, 64);
+    outline: none;
+    color: rgb(138, 138, 241);
+    border-radius: 50px;
+    transition: 0.25px;
+    cursor: pointer;
+    overflow: hidden;
+    width: 50px;
+
+}
+
+.mensajes button[type="submit"]:hover{
+
+    border: 1px solid rgb(112, 152, 241);
+
+}
+
+.mensaje-envio{
+
+    display: flex;
+    flex-direction: row;
+
+}
+
