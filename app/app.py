@@ -24,6 +24,7 @@ def msg_retriever():
         print(f"\nMensaje enviado del usuario B al usuario A: {msg_b}\n")
         return f"Mensaje enviado del usuario B al usuario A: {msg_b}"
 
+    # Else, if the request method is GET
     return render_template('index.html')
 
 
