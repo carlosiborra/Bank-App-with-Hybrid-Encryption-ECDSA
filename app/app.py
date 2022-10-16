@@ -8,14 +8,25 @@ app = Flask(__name__)
 # which URL is associated function
 
 # Creating a route that has both GET and POST request methods
+
+
 @app.route('/', methods=['GET', 'POST'])
-def home():
+def msg_retriever():
+    """Coge el mensaje del formulario y lo guarda"""
+    
     if request.method == 'POST':
-        name = request.form.get('name')
-        username = request.form.get('username')
-        print(name, username)
-        return f'{name}, your username is {username}'
+        msg_a = request.form.get('msgA')
+        msg_b = request.form.get('msgB')
+
+        if msg_a:
+            print(f"\nMensaje enviado del usuario A al usuario B: {msg_a}\n")
+            return f"Mensaje enviado del usuario A al usuario B: {msg_a}"
+        print(f"\nMensaje enviado del usuario B al usuario A: {msg_b}\n")
+        return f"Mensaje enviado del usuario B al usuario A: {msg_b}"
+
     return render_template('index.html')
+
+
 
 
 # Initiating the application
