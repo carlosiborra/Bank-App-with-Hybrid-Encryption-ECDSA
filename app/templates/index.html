@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="author" content="100451339 & 100451059 & ">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/style.css">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">
     <title>Práctica Criptografia - Parte 1</title>
 </head>
 
@@ -13,29 +13,32 @@
     <div class="background">
         <img href="https://img.freepik.com/premium-photo/business-conference-with-busines-man-woman_9693-1559.jpg?w=2000">
     </div>
-    <form class="mensajes" action="" method="">
+    <div class="mensajes">
         <h1>
             Bienvenido, escriba un mensaje para ser encriptado.
         </h1>
         <div class="mensaje-usuario">
-            <p>
-                Mensaje Usuario A
-            </p>
             <div class="mensaje-envio">
-                <input type="text" id="msgA" name="msgA" placeholder="Escriba un mensaje">
-                <button type="submit"></button>
+                <form action="" method="post">
+                    <p>
+                        Mensaje Usuario A
+                    </p>
+                    <input type="text" id="msgA" name="msgA" placeholder="mensaje">
+                    <button type="submit">Enviar</button>
+                </form>
             </div>
         </div>
         <div class="mensaje-usuario">
-            <p>
-                Mensaje Usuario B
-            </p>
             <div class="mensaje-envio">
-                <input type="text" id="msgB" name="msgB" placeholder="Escriba un mensaje">
-                <button type="submit"></button>
+                <form action="" method="post">
+                    <p>
+                        Mensaje Usuario B
+                    </p>
+                    <input type="text" id="msgB" name="msgB" placeholder="mensaje">
+                    <button type="submit">Enviar</button>
+                </form>
             </div>
         </div>
-    </form>
-
+    </div>
 </body>
 </html>
