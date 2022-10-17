@@ -43,27 +43,26 @@ def msg_retriever():
         if msg_b:
             # ? Asumimos que la llave ha sido compartida por un canal seguro
             # ? entre el usuario y el banco, en este caso para mayor seguridad, de 32 bytes
-            # key = get_random_bytes(32)
             try:
                 key = b'\x96\x04\xb1k\x0f\x04^\xd3bg\xde\xed4\x128\x11\xa4Zc\xd87?j\xdf\xd6\x91y\x98\x88\xbev\xfa'
 
-                # El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
+                # ? El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
                 mensaje_encriptado = encriptar_mensaje(key, msg_b)
                 print(
                     f"Mensaje encriptado con sus atributos: {mensaje_encriptado}\n")
 
-                # El banco debe desencriptar el mensaje con la cantidad de dinero usando el modo EAX
+                # ? El banco debe desencriptar el mensaje con la cantidad de dinero usando el modo EAX
                 msg_b = desencriptar_mensaje(key, mensaje_encriptado)
                 print(f"Mensaje descifrado: {msg_b}\n")
 
-                # Comprobamos que el mensaje sea un número (cantidad de dinero a ingresar)
+                # ? Comprobamos que el mensaje sea un número (cantidad de dinero a ingresar)
                 if not msg_b.isnumeric():
                     return f"Cantidad errónea: {msg_b}"
 
-                # Añadimos la cantidad de dinero a la cuenta del usuario
+                # ? Añadimos la cantidad de dinero a la cuenta del usuario
                 add_money(token_usuario, int(msg_b))
 
-                # Se termina la transacción, redirigimos al usuario a una página de confirmación
+                # ? Se termina la transacción, redirigimos al usuario a una página de confirmación
                 print(
                     f"\nDinero ingresado en la cuenta del usuario: {msg_b}€\n")
                 return f"Operación satisfactoria. Se le ha ingresado en la cuenta {msg_b}€"
