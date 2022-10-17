@@ -1,5 +1,8 @@
+""" Flask app docstring """
 # importing Flask and other modules
-from flask import Flask, render_template, request, url_for, flash, redirect
+from flask import Flask, render_template, request
+from encriptado import hash_msg, encriptar_mensaje, desencriptar_mensaje
+from jsonConfig import add_money, compare_hash
 
 # Flask constructor
 app = Flask(__name__)
@@ -13,21 +16,63 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def msg_retriever():
     """Coge el mensaje del formulario y lo guarda"""
-    
+
+    global token_usuario
+
     if request.method == 'POST':
         msg_a = request.form.get('msgA')
         msg_b = request.form.get('msgB')
 
         if msg_a:
-            print(f"\nMensaje enviado del usuario A al usuario B: {msg_a}\n")
-            return f"Mensaje enviado del usuario A al usuario B: {msg_a}"
-        print(f"\nMensaje enviado del usuario B al usuario A: {msg_b}\n")
-        return f"Mensaje enviado del usuario B al usuario A: {msg_b}"
+            print(f"\nToken en claro: {msg_a}\n")
+
+            token_hash = hash_msg(msg_a)
+            token_usuario = token_hash
+
+            print(f"Hash del token: {token_hash}\n")
+
+            hash_comparison = compare_hash(token_hash)
+
+            print(f"Comparación del hash: {hash_comparison}\n")
+
+            if hash_comparison:
+                print("El token introducido es correcto, redirigiendo...\n")
+                return render_template('mensaje.html')
+            return f"El token introducido {msg_a}, no pertenece a ningún usuario"
+
+        if msg_b:
+            # ? Asumimos que la llave ha sido compartida por un canal seguro
+            # ? entre el usuario y el banco, en este caso para mayor seguridad, de 32 bytes
+            # key = get_random_bytes(32)
+            try:
+                key = b'\x96\x04\xb1k\x0f\x04^\xd3bg\xde\xed4\x128\x11\xa4Zc\xd87?j\xdf\xd6\x91y\x98\x88\xbev\xfa'
+
+                # El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
+                mensaje_encriptado = encriptar_mensaje(key, msg_b)
+                print(
+                    f"Mensaje encriptado con sus atributos: {mensaje_encriptado}\n")
+
+                # El banco debe desencriptar el mensaje con la cantidad de dinero usando el modo EAX
+                msg_b = desencriptar_mensaje(key, mensaje_encriptado)
+                print(f"Mensaje descifrado: {msg_b}\n")
+
+                # Comprobamos que el mensaje sea un número (cantidad de dinero a ingresar)
+                if not msg_b.isnumeric():
+                    return f"Cantidad errónea: {msg_b}"
+
+                # Añadimos la cantidad de dinero a la cuenta del usuario
+                add_money(token_usuario, int(msg_b))
+
+                # Se termina la transacción, redirigimos al usuario a una página de confirmación
+                print(
+                    f"\nDinero ingresado en la cuenta del usuario: {msg_b}€\n")
+                return f"Operación satisfactoria. Se le ha ingresado en la cuenta {msg_b}€"
+
+            except Exception as error:
+                return f"Error al desencriptar el mensaje {error}"
 
     # Else, if the request method is GET
     return render_template('index.html')
-
-
 
 
 # Initiating the application
