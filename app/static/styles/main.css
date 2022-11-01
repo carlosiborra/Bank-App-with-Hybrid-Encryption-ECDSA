@@ -101,12 +101,12 @@ body{
     cursor: pointer;
     width: 30%;
     height:40px;
-    transition: all 0.4s ease-in-out;
+    transition: all 0.2s ease;
   }
 
 
 .mensajes button:hover {
-    transform: scale(1.2);
+    transform: scale(1.1);
   }
 
   

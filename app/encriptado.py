@@ -7,7 +7,7 @@ from Crypto.Random import get_random_bytes
 
 
 def encriptar_mensaje(key, message):
-    """ Encrypt a token """
+    """ Función para encriptar el mensaje """
     # ? Pasar los el texto en claro a bytes
     data = message.encode('utf-8')
     print(f"\nTexto en claro (bytes): {data}\n")
@@ -24,7 +24,7 @@ def encriptar_mensaje(key, message):
 
 
 def desencriptar_mensaje(key, message):
-    """ Decrypt a token """
+    """ Función para desencriptar el mensaje """
     # ? Obtenemos los atributos del objeto mensaje cifrado
     nonce = message[0]
     tag = message[1]
@@ -42,7 +42,7 @@ def desencriptar_mensaje(key, message):
 
 
 def hash_msg(mensaje="adasdasd"):
-    """ Encrypt a message """
+    """ Función para hashear el mensaje """
     hashed_message = hashlib.sha256(mensaje.encode('utf-8')).hexdigest()
     return hashed_message
 

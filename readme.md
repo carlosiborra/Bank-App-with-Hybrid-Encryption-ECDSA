@@ -1,4 +1,12 @@
-# Planteamiento
+# Lanzando el servidor
+
+1. Tener instalados los requirements
+2. Acceder a la carpeta app: *cd app*
+3. Lanzar el sevidor web: *flask run* o *python app.py*
+
+![1667308990809](image/readme/1667308990809.png)
+
+# Planteamiento y datos de interés
 
 - Tenemos 1 usario que accede con su token que ha recibido por correo al banco
 - Una vez comprobado su token con el hash de la DB, accederá a una página para las transacciones
@@ -39,21 +47,3 @@ Para acceder al entorno virtual, estando dentro de la carpeta backend en el term
 Para ejecutar flask: *flask run o python app.py*
 
 Código para hacer push si no se detecta el remoto: git push origin HEAD:master
-
-test
-
-# Links de interés:
-
-* **Curso rápido de Flask**
-  * https://www.digitalocean.com/community/tutorials/how-to-make-a-web-application-using-flask-in-python-3
-  * https://www.geeksforgeeks.org/retrieving-html-from-data-using-flask/
-  * https://stackoverflow.com/questions/12277933/send-data-from-a-textbox-into-flask
-  * https://www.educative.io/answers/how-to-retrieve-html-data-from-flask
-* **Guía para encriptar-desencriptar el archivo.txt**
-  * https://www.geeksforgeeks.org/encrypt-and-decrypt-files-using-python/
-* JSON
-  * https://linuxhint.com/search_json_python/
-* IMPORTANTE: PORQ HEMOS ELEGIDO EL TIPO DE CIFRADO EAX
-  * [EAX mode - Wikipedia](https://en.wikipedia.org/wiki/EAX_mode)
-  * [EAX mode | Crypto Wiki | Fandom](https://cryptography.fandom.com/wiki/EAX_mode)
-  *
