@@ -47,20 +47,15 @@ def hash_msg(mensaje="adasdasd"):
     return hashed_message
 
 def cifrado_asimetrico(publica_banco,aes_key):
+    """ Función para cifrar la clave simétrica """
     key = RSA.importKey(publica_banco)
     cipher_rsa = PKCS1_OAEP.new(key)
     key_cifrada = cipher_rsa.encrypt(aes_key)
     return key_cifrada
 
 def descifrado_asimetrico(privada_banco,aes_key_cifrada):
-    key = RSA.importKey(privada_banco,  passphrase="12345")
+    """ Función para descifrar la clave simétrica """
+    key = RSA.importKey(privada_banco,  passphrase="23456")
     cipher_rsa = PKCS1_OAEP.new(key)
     key_descifrada = cipher_rsa.decrypt(aes_key_cifrada)
-    
     return key_descifrada
-
-# ? Para crear una llave aleatoria de 32 bytes, más segura que una llave de 16 bytes
-# llave = get_random_bytes(32)
-
-# ? Para añadir un usuario a la base de datos con su token encriptado:
-# print(hash_msg("1822311231"))
