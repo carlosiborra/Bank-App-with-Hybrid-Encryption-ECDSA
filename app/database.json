@@ -2,21 +2,25 @@
     {
         "usuario": "José García Martín",
         "token": "e770708a8b682abd84de7851950e00479563c4edb57c2af0e77001b28c49887f",
-        "dinero": 5470
+        "dinero": 5670,
+        "key": 1
     },
     {
         "usuario": "Carlos Suárez López",
         "token": "41da787004e0e2adc3a9499deb8c90ddbbb5e487a115dad827582e01ca3cf812",
-        "dinero": 50120
+        "dinero": 50120,
+        "key": 1
     },
     {
         "usuario": "Miguel Ángel García Cebrián",
         "token": "524aaddf27ebcebd61de1ebb699f20fd2a6ce161c53fc1529bfbba2bd868f0b9",
-        "dinero": 20
+        "dinero": 20,
+        "key": 1
     },
     {
         "usuario": "Alberto Fernández Cuesta",
         "token": "d0e448d6a6fe6b4ba5783258b73c349bef455e0d2877a05a182f5d408df8f643",
-        "dinero": 11812
+        "dinero": 11812,
+        "key": 1
     }
 ]

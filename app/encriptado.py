@@ -1,10 +1,10 @@
 """ Encrypt and decrypt messages """
 import hashlib
-from Crypto.Cipher import AES
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.Random import get_random_bytes
 
 # ! Hemos decido usar el modo EAX de AES para encriptar y desencriptar el mensaje
-
 
 def encriptar_mensaje(key, message):
     """ Función para encriptar el mensaje """
@@ -46,6 +46,18 @@ def hash_msg(mensaje="adasdasd"):
     hashed_message = hashlib.sha256(mensaje.encode('utf-8')).hexdigest()
     return hashed_message
 
+def cifrado_asimetrico(publica_banco,aes_key):
+    key = RSA.importKey(publica_banco)
+    cipher_rsa = PKCS1_OAEP.new(key)
+    key_cifrada = cipher_rsa.encrypt(aes_key)
+    return key_cifrada
+
+def descifrado_asimetrico(privada_banco,aes_key_cifrada):
+    key = RSA.importKey(privada_banco,  passphrase="12345")
+    cipher_rsa = PKCS1_OAEP.new(key)
+    key_descifrada = cipher_rsa.decrypt(aes_key_cifrada)
+    
+    return key_descifrada
 
 # ? Para crear una llave aleatoria de 32 bytes, más segura que una llave de 16 bytes
 # llave = get_random_bytes(32)

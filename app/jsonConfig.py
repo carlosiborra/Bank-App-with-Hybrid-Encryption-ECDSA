@@ -42,3 +42,10 @@ def compare_hash(token):
         if i["token"] == token:
             return True
     return False
+
+def get_key(token):
+    with open(JSON_PATH, "r", encoding="utf8") as f:
+        data = json.load(f)
+    for i in data:
+        if i["token"] == token:
+            return i["key"]

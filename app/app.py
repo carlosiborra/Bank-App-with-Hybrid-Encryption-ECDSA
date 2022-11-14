@@ -1,12 +1,13 @@
 """ Flask app docstring """
 # importing Flask and other modules
 from flask import Flask, render_template, request
-from encriptado import hash_msg, encriptar_mensaje, desencriptar_mensaje
-from jsonConfig import add_money, compare_hash
+from encriptado import hash_msg, encriptar_mensaje, desencriptar_mensaje, cifrado_asimetrico, descifrado_asimetrico
+from jsonConfig import add_money, compare_hash, get_key
 
 # Flask constructor
 app = Flask(__name__)
-
+publica_banco= 123
+privada_banco=123
 # A decorator used to tell the application
 # which URL is associated function
 
@@ -44,6 +45,9 @@ def msg_retriever():
             # ? Asumimos que la llave ha sido compartida por un canal seguro
             # ? entre el usuario y el banco, en este caso para mayor seguridad, de 32 bytes
             try:
+                key_usuario = get_key(token_hash)
+                key_cifrada=cifrado_asimetrico(publica_banco,key_usuario)
+                key = descifrado_asimetrico(privada_banco,key_cifrada)
                 key = b'\x96\x04\xb1k\x0f\x04^\xd3bg\xde\xed4\x128\x11\xa4Zc\xd87?j\xdf\xd6\x91y\x98\x88\xbev\xfa'
 
                 # ? El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
