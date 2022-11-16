@@ -1,9 +1,11 @@
 """ Flask app docstring """
 # importing Flask and other modules
 from flask import Flask, render_template, request
+from Crypto import Random
 from Crypto.PublicKey import RSA
 from encriptado import hash_msg, encriptar_mensaje, desencriptar_mensaje, cifrado_asimetrico, descifrado_asimetrico
-from jsonConfig import add_money, compare_hash, get_key
+from jsonConfig import add_money, compare_hash
+
 # Flask constructor
 app = Flask(__name__)
 
@@ -21,7 +23,6 @@ with open("public.pem", "wb") as f:
 
 
 # Creating a route that has both GET and POST request methods
-
 @app.route('/', methods=['GET', 'POST'])
 def msg_retriever():
     """Coge el mensaje del formulario y lo guarda"""
@@ -52,24 +53,25 @@ def msg_retriever():
 
         if msg_b:
             try:
-                # ? Se obtiene la clave simétrica del usuario de la base de datos
-                #key=get_key(token_hash)
+                # ? Se obtiene la clave simétrica aleatoria de 32 bytes
+                key = Random.get_random_bytes(32)
+                print(f"LLave simétrica aleatoria: {key}\n")
 
-                key = b'\x96\x04\xb1k\x0f\x04^\xd3bg\xde\xed4\x128\x11\xa4Zc\xd87?j\xdf\xd6\x91y\x98\x88\xbev\xfa'
-
-                # ? Se cifra la clave simétrica usando la clavce pública del banco
+                # ? Se cifra la clave simétrica usando la clave pública del banco
                 with open("public.pem", "rb") as f:
                     publica = f.read()
                 key_cifrada=cifrado_asimetrico(publica,key)
+                print(f"LLave simétrica cifrada: {key_cifrada}\n")
 
                 # ? Se descifra la clave simétrica usando la clave privada del banco
                 with open("private.pem", "rb") as f:
                     privada = f.read()
-                key = descifrado_asimetrico(privada,key_cifrada)
+                key = descifrado_asimetrico(privada,key_cifrada) 
+                print(f"LLave simétrica descifrada: {key}\n")
 
                 # ? El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
                 mensaje_encriptado = encriptar_mensaje(key, msg_b)
-                print(f"Mensaje encriptado con sus atributos: {mensaje_encriptado}\n")
+                print(f"Mensaje cifrado con sus atributos: {mensaje_encriptado}\n")
 
                 # ? El banco debe desencriptar el mensaje con la cantidad de dinero usando el modo EAX
                 msg_b = desencriptar_mensaje(key, mensaje_encriptado)
@@ -97,3 +99,8 @@ def msg_retriever():
 if __name__ == '__main__':
     # Running the application and leaving the debug mode ON
     app.run(debug=True)
+
+
+
+
+     
