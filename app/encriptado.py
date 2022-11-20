@@ -7,6 +7,8 @@ from json import dumps
 from ellipticcurve.ecdsa import Ecdsa
 from ellipticcurve.privateKey import PrivateKey
 
+
+
 # ! Obtenemos la llave privada aleatoria de 32 bytes
 
 def get_key() -> bytes:
