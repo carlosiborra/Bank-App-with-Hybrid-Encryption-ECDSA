@@ -7,6 +7,7 @@ from encriptado import cifrado_asimetrico, descifrado_asimetrico
 from encriptado import cifrado_simetrico, descifrado_simetrico
 from encriptado import sign_msg, verify_signature
 from jsonConfig import add_money, compare_hash
+from ellipticcurve.privateKey import PrivateKey
 
 
 # Flask constructor
@@ -74,9 +75,19 @@ def msg_retriever():
                 key = descifrado_asimetrico(privada, key_cifrada, module)
                 print(f"LLave simétrica descifrada: {key}\n")
 
+                # ? Generamos las clave pública y privada para la firma digital
+                # Para ello usamos la curva elíptica secp256k1 (Bitcoin)
+                # Creamos la clave privada
+                priv_key = PrivateKey()
+                # Obtenemos la clave pública a partir de la privada
+                pub_key = priv_key.publicKey()
+                print(
+                    f"Clave privada secp256k1: {priv_key}\nClave pública secp256k1: {pub_key}\n")
+
                 # ? Usamos la clave pública del usuario para firmar el mensaje
-                signature = sign_msg(publica, msg_b)
-                print(f"Firma del mensaje: {signature}\n")
+                signature = sign_msg(msg_b, priv_key)
+                # Transformamos la firma (obj) almacenada en un registro a base64 para imprimirla
+                print(f"Firma del mensaje: {signature.toBase64()}\n")
 
                 # ? El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
                 mensaje_encriptado = cifrado_simetrico(key, msg_b)
@@ -88,13 +99,15 @@ def msg_retriever():
                 print(f"Mensaje descifrado: {msg_b}\n")
 
                 # ? Se verifica la firma del mensaje usando la clave pública del banco
-                verification = verify_signature(publica, msg_b, signature)
+                verification = verify_signature(msg_b, signature, pub_key)
                 # Si la firma es correcta, se continua con el proceso
+                # Se compara el hash del msg inicial con el hash del msg descifrado tras la firma
                 if verification:
-                    print("La firma del mensaje es correcta\n")
+                    print(
+                        "La firma del mensaje ha sido verificada satisfactoriamente\n")
                 # Si la firma es incorrecta, se notifica al usuario
                 else:
-                    print("La firma del mensaje es incorrecta\n")
+                    print("La firma del mensaje ha resultado incorrecta\n")
                     return "La firma del mensaje es incorrecta: el mensaje ha sido modificado"
 
                 # ? Comprobamos que el mensaje sea un número (cantidad de dinero a ingresar)
