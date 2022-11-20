@@ -3,7 +3,10 @@ import hashlib
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.Random import get_random_bytes
+from json import dumps
 from ellipticcurve.ecdsa import Ecdsa
+from ellipticcurve.privateKey import PrivateKey
+
 
 
 # ! Obtenemos la llave privada aleatoria de 32 bytes
@@ -29,7 +32,7 @@ def cifrado_simetrico(key, message):
     """ Función para encriptar el mensaje """
     # ? Pasar los el texto en claro a bytes
     data = message.encode('utf-8')
-    print(f"Texto en claro (bytes): {data}\n")
+    print(f"\nTexto en claro (bytes): {data}\n")
 
     # ? Crear el objeto AES con la llave y el modo de operación
     cipher = AES.new(key, AES.MODE_EAX)
@@ -79,25 +82,26 @@ def descifrado_asimetrico(privada_banco, aes_key_cifrada, module="23456") -> byt
 
 
 # ! Firma digital usando ECDSA
-# Usamos la librería starkbank-ecdsa para poder firmar y verificar la firma
-# Usamos secp256k1 como curva elíptica, la misma que usa Bitcoin
+# usamos la librería pycoin.ecdsa para poder firmar y verificar la firma
 
 # Función para firmar el mensaje
-def sign_msg(msg, priv_key):
+def sign_msg(priv_key, msg, module="23456"):
     """ Función para firmar el mensaje """
-    # ? Hasheamos el mensaje - SHA3-256 (simplifica la longitud posible del mensaje)
+    # ? Hasheamos el mensaje - SHA3-256 (simplifica la longitud posible)
     hashed_message = hash_msg(msg)
     # ? Firmamos el mensaje con la llave privada del banco y el mensaje hasheado - ECDSA
     # Usamos secp256k1 como curva elíptica, la misma que usa Bitcoin
-    signature = Ecdsa.sign(hashed_message, priv_key)
+    key = RSA.importKey(priv_key, module)
+    signature = Ecdsa.sign(hashed_message, key)
     return signature
 
 
 # Función para verificar la firma
-def verify_signature(msg, signature, pub_key):
+def verify_signature(pub_key, msg, signature, module="23456"):
     """ Función para verificar la firma """
-    # ? Hasheamos el mensaje - SHA3-256 (simplifica la longitud posible del mensaje)
+    # ? Hasheamos el mensaje - SHA3-256 (simplifica la longitud posible)
     hashed_message = hash_msg(msg)
     # ? Verificamos la firma con la llave pública del banco y el mensaje hasheado - ECDSA
-    result = Ecdsa.verify(hashed_message, signature, pub_key)
+    key = RSA.importKey(pub_key, module)
+    result = Ecdsa.verify(hashed_message, signature, key)
     return result
