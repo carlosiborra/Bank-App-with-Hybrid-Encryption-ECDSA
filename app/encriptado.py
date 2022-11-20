@@ -62,3 +62,9 @@ def descifrado_asimetrico(privada_banco, aes_key_cifrada, module="23456") -> byt
     cipher_rsa = PKCS1_OAEP.new(key)
     key_descifrada = cipher_rsa.decrypt(aes_key_cifrada)
     return key_descifrada
+
+
+def get_key() -> bytes:
+    """ Función para obtener la llave de 32 bytes """
+    key = get_random_bytes(32)
+    return key

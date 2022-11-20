@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request
 from Crypto import Random
 from Crypto.PublicKey import RSA
-from encriptado import hash_msg, encriptar_mensaje, desencriptar_mensaje, cifrado_asimetrico, descifrado_asimetrico
+from encriptado import hash_msg, encriptar_mensaje, desencriptar_mensaje, cifrado_asimetrico, descifrado_asimetrico, get_key
 from jsonConfig import add_money, compare_hash
 
 # Flask constructor
@@ -55,7 +55,7 @@ def msg_retriever():
                     f.write(publica_banco)
 
                 # ? Se obtiene la clave simétrica aleatoria de 32 bytes
-                key = Random.get_random_bytes(32)
+                key = get_key()
                 print(f"LLave simétrica aleatoria: {key}\n")
 
                 # ? Se cifra la clave simétrica usando la clave pública del banco
@@ -67,7 +67,7 @@ def msg_retriever():
                 # ? Se descifra la clave simétrica usando la clave privada del banco
                 with open("private.pem", "rb") as f:
                     privada = f.read()
-                key = descifrado_asimetrico(privada, key_cifrada,module)
+                key = descifrado_asimetrico(privada, key_cifrada, module)
                 print(f"LLave simétrica descifrada: {key}\n")
 
                 # ? El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
