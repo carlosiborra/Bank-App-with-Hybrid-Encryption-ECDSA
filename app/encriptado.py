@@ -6,6 +6,7 @@ from Crypto.Random import get_random_bytes
 
 # ! Hemos decido usar el modo EAX de AES para encriptar y desencriptar el mensaje
 
+
 def encriptar_mensaje(key, message):
     """ Función para encriptar el mensaje """
     # ? Pasar los el texto en claro a bytes
@@ -23,7 +24,7 @@ def encriptar_mensaje(key, message):
     return stored_text
 
 
-def desencriptar_mensaje(key, message):
+def desencriptar_mensaje(key, message) -> str:
     """ Función para desencriptar el mensaje """
     # ? Obtenemos los atributos del objeto mensaje cifrado
     nonce = message[0]
@@ -41,21 +42,23 @@ def desencriptar_mensaje(key, message):
     return data
 
 
-def hash_msg(mensaje="adasdasd"):
+def hash_msg(mensaje="nonValidMsgPredet"):
     """ Función para hashear el mensaje """
     hashed_message = hashlib.sha256(mensaje.encode('utf-8')).hexdigest()
     return hashed_message
 
-def cifrado_asimetrico(publica_banco,aes_key):
+
+def cifrado_asimetrico(publica_banco, aes_key) -> bytes:
     """ Función para cifrar la clave simétrica """
     key = RSA.importKey(publica_banco)
     cipher_rsa = PKCS1_OAEP.new(key)
     key_cifrada = cipher_rsa.encrypt(aes_key)
     return key_cifrada
 
-def descifrado_asimetrico(privada_banco,aes_key_cifrada):
+
+def descifrado_asimetrico(privada_banco, aes_key_cifrada, module="23456") -> bytes:
     """ Función para descifrar la clave simétrica """
-    key = RSA.importKey(privada_banco,  passphrase="23456")
+    key = RSA.importKey(privada_banco, module)
     cipher_rsa = PKCS1_OAEP.new(key)
     key_descifrada = cipher_rsa.decrypt(aes_key_cifrada)
     return key_descifrada

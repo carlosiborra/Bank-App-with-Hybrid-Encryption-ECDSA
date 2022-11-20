@@ -9,20 +9,9 @@ from jsonConfig import add_money, compare_hash
 # Flask constructor
 app = Flask(__name__)
 
-#Se almacena la clave publica del banco en private.pem
-llave= RSA.generate(2048)
-secret_code="23456"
-privada_banco= llave.export_key(passphrase=secret_code)
-with open("private.pem", "wb") as f:
-    f.write(privada_banco)
-
-#Se almacena la clave publica del banco en public.pem
-publica_banco = llave.publickey().export_key()
-with open("public.pem", "wb") as f:
-    f.write(publica_banco)
-
-
 # Creating a route that has both GET and POST request methods
+
+
 @app.route('/', methods=['GET', 'POST'])
 def msg_retriever():
     """Coge el mensaje del formulario y lo guarda"""
@@ -42,7 +31,6 @@ def msg_retriever():
             print(f"Hash del token: {token_hash}\n")
 
             hash_comparison = compare_hash(token_hash)
-        
 
             print(f"Comparación del hash: {hash_comparison}\n")
 
@@ -53,6 +41,19 @@ def msg_retriever():
 
         if msg_b:
             try:
+
+                # ? Se almacena la clave publica del banco en private.pem
+                llave = RSA.generate(2048)
+                module = "23456"
+                privada_banco = llave.export_key(passphrase=module)
+                with open("private.pem", "wb") as f:
+                    f.write(privada_banco)
+
+                # ? Se almacena la clave publica del banco en public.pem
+                publica_banco = llave.publickey().export_key()
+                with open("public.pem", "wb") as f:
+                    f.write(publica_banco)
+
                 # ? Se obtiene la clave simétrica aleatoria de 32 bytes
                 key = Random.get_random_bytes(32)
                 print(f"LLave simétrica aleatoria: {key}\n")
@@ -60,20 +61,21 @@ def msg_retriever():
                 # ? Se cifra la clave simétrica usando la clave pública del banco
                 with open("public.pem", "rb") as f:
                     publica = f.read()
-                key_cifrada=cifrado_asimetrico(publica,key)
+                key_cifrada = cifrado_asimetrico(publica, key)
                 print(f"LLave simétrica cifrada: {key_cifrada}\n")
 
                 # ? Se descifra la clave simétrica usando la clave privada del banco
                 with open("private.pem", "rb") as f:
                     privada = f.read()
-                key = descifrado_asimetrico(privada,key_cifrada) 
+                key = descifrado_asimetrico(privada, key_cifrada,module)
                 print(f"LLave simétrica descifrada: {key}\n")
 
                 # ? El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
                 mensaje_encriptado = encriptar_mensaje(key, msg_b)
-                print(f"Mensaje cifrado con sus atributos: {mensaje_encriptado}\n")
+                print(
+                    f"Mensaje cifrado con sus atributos: {mensaje_encriptado}\n")
 
-                # ? El banco debe desencriptar el mensaje con la cantidad de dinero usando el modo EAX
+                # ? El banco desencripta el mensaje con la cantidad de dinero usando el modo EAX
                 msg_b = desencriptar_mensaje(key, mensaje_encriptado)
                 print(f"Mensaje descifrado: {msg_b}\n")
 
@@ -85,7 +87,8 @@ def msg_retriever():
                 add_money(token_usuario, int(msg_b))
 
                 # ? Se termina la transacción, redirigimos al usuario a una página de confirmación
-                print(f"\nDinero ingresado en la cuenta del usuario: {msg_b}€\n")
+                print(
+                    f"\nDinero ingresado en la cuenta del usuario: {msg_b}€\n")
                 return f"Operación satisfactoria. Se le ha ingresado en la cuenta {msg_b}€"
 
             except Exception as error:
@@ -99,8 +102,3 @@ def msg_retriever():
 if __name__ == '__main__':
     # Running the application and leaving the debug mode ON
     app.run(debug=True)
-
-
-
-
-     
