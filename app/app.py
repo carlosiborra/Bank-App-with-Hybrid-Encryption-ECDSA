@@ -77,8 +77,17 @@ def msg_retriever():
 
                 # ? Generamos las clave pública y privada para la firma digital
                 # Para ello usamos la curva elíptica secp256k1 (Bitcoin)
-                # Creamos la clave privada
-                priv_key = PrivateKey()
+                
+                # ? Se obtiene la clave privada de la firma almacenada privateSign.pem
+                with open("privateSign.pem", "rb") as f:
+                    priv_key_pem = f.read()
+                    # Sustituimos las \n por saltos de línea, al igual que con \r
+                    priv_key_pem = str(priv_key_pem).replace('\\n', '\n').replace('\\r', '\r')
+                    print(f"Clave privada de la firma: {priv_key_pem}\n")
+
+                # Obtener la clave privada de la firma
+                priv_key = PrivateKey.fromPem(priv_key_pem)
+                
                 # Obtenemos la clave pública a partir de la privada
                 pub_key = priv_key.publicKey()
                 print(
@@ -123,7 +132,7 @@ def msg_retriever():
                 return f"Operación satisfactoria. Se le ha ingresado en la cuenta {msg_b}€"
 
             except Exception as error:
-                return f"Error al desencriptar el mensaje; Error: {error}"
+                return f'Error al desencriptar el mensaje; "Error: {error}"'
 
     # Else, if the request method is GET
     return render_template('index.html')
