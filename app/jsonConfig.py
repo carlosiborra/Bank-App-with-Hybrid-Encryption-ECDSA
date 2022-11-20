@@ -44,5 +44,3 @@ def compare_hash(token):
             return True
     f.close()
     return False
-
-

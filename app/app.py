@@ -1,10 +1,13 @@
 """ Flask app docstring """
 # importing Flask and other modules
 from flask import Flask, render_template, request
-from Crypto import Random
 from Crypto.PublicKey import RSA
-from encriptado import hash_msg, encriptar_mensaje, desencriptar_mensaje, cifrado_asimetrico, descifrado_asimetrico, get_key
+from encriptado import get_key, hash_msg
+from encriptado import cifrado_asimetrico, descifrado_asimetrico
+from encriptado import cifrado_simetrico, descifrado_simetrico
+from encriptado import sign_msg, verify_signature
 from jsonConfig import add_money, compare_hash
+
 
 # Flask constructor
 app = Flask(__name__)
@@ -41,7 +44,6 @@ def msg_retriever():
 
         if msg_b:
             try:
-
                 # ? Se almacena la clave publica del banco en private.pem
                 llave = RSA.generate(2048)
                 module = "23456"
@@ -59,25 +61,41 @@ def msg_retriever():
                 print(f"LLave simétrica aleatoria: {key}\n")
 
                 # ? Se cifra la clave simétrica usando la clave pública del banco
+                # Se obtiene la clave pública del banco
                 with open("public.pem", "rb") as f:
                     publica = f.read()
                 key_cifrada = cifrado_asimetrico(publica, key)
                 print(f"LLave simétrica cifrada: {key_cifrada}\n")
 
                 # ? Se descifra la clave simétrica usando la clave privada del banco
+                # Se obtiene la clave privada del banco
                 with open("private.pem", "rb") as f:
                     privada = f.read()
                 key = descifrado_asimetrico(privada, key_cifrada, module)
                 print(f"LLave simétrica descifrada: {key}\n")
 
+                # ? Usamos la clave pública del usuario para firmar el mensaje
+                signature = sign_msg(publica, msg_b)
+                print(f"Firma del mensaje: {signature}\n")
+
                 # ? El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
-                mensaje_encriptado = encriptar_mensaje(key, msg_b)
+                mensaje_encriptado = cifrado_simetrico(key, msg_b)
                 print(
                     f"Mensaje cifrado con sus atributos: {mensaje_encriptado}\n")
 
                 # ? El banco desencripta el mensaje con la cantidad de dinero usando el modo EAX
-                msg_b = desencriptar_mensaje(key, mensaje_encriptado)
+                msg_b = descifrado_simetrico(key, mensaje_encriptado)
                 print(f"Mensaje descifrado: {msg_b}\n")
+
+                # ? Se verifica la firma del mensaje usando la clave pública del banco
+                verification = verify_signature(publica, msg_b, signature)
+                # Si la firma es correcta, se continua con el proceso
+                if verification:
+                    print("La firma del mensaje es correcta\n")
+                # Si la firma es incorrecta, se notifica al usuario
+                else:
+                    print("La firma del mensaje es incorrecta\n")
+                    return "La firma del mensaje es incorrecta: el mensaje ha sido modificado"
 
                 # ? Comprobamos que el mensaje sea un número (cantidad de dinero a ingresar)
                 if not msg_b.isnumeric():
@@ -92,7 +110,7 @@ def msg_retriever():
                 return f"Operación satisfactoria. Se le ha ingresado en la cuenta {msg_b}€"
 
             except Exception as error:
-                return f"Error al desencriptar el mensaje {error}"
+                return f"Error al desencriptar el mensaje; Error: {error}"
 
     # Else, if the request method is GET
     return render_template('index.html')
