@@ -74,28 +74,15 @@ def msg_retriever():
                 key = descifrado_asimetrico(privada, key_cifrada, module)
                 print(f"LLave simétrica descifrada: {key}\n")
 
-<<<<<<< HEAD
-                # ? Generamos las clave pública y privada para la firma digital - ECDSA
+                # ? Generamos las clave pública y privada para la firma digital
                 # Para ello usamos la curva elíptica secp256k1 (Bitcoin)
-
-                # ? Se obtiene la clave privada de la firma almacenada privateSign.pem
-                with open("privateSign.pem", "rb") as f:
-                    priv_key_pem = f.read()
-                    # Sustituimos las \n por saltos de línea, al igual que con \r
-                    priv_key_pem = str(priv_key_pem).replace(
-                        '\\n', '\n').replace('\\r', '\r')
-                    print(f"Clave privada de la firma: {priv_key_pem}\n")
-
-                # Obtener la clave privada de la firma
-                priv_key = PrivateKey.fromPem(priv_key_pem)
-
+                # Creamos la clave privada
+                priv_key = PrivateKey()
                 # Obtenemos la clave pública a partir de la privada
                 pub_key = priv_key.publicKey()
                 print(
                     f"Clave privada secp256k1: {priv_key}\nClave pública secp256k1: {pub_key}\n")
 
-=======
->>>>>>> parent of 27575fd (ECDSA funcionando)
                 # ? Usamos la clave pública del usuario para firmar el mensaje
                 signature = sign_msg(publica, msg_b)
                 print(f"Firma del mensaje: {signature}\n")
