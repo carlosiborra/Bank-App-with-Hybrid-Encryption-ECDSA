@@ -5,9 +5,10 @@ from Crypto.PublicKey import RSA
 from encriptado import get_key, hash_msg
 from encriptado import cifrado_asimetrico, descifrado_asimetrico
 from encriptado import cifrado_simetrico, descifrado_simetrico
-from encriptado import sign_msg, verify_signature
+from encriptado import private_sign_key, public_sign_key
+from encriptado import sign_msg_cryptography, verify_sign_cryptography
+from encriptado import certificate_sign, verify_certificate_sign
 from jsonConfig import add_money, compare_hash
-from ellipticcurve.privateKey import PrivateKey
 
 
 # Flask constructor
@@ -49,45 +50,52 @@ def msg_retriever():
                 llave = RSA.generate(2048)
                 module = "23456"
                 privada_banco = llave.export_key(passphrase=module)
-                with open("private.pem", "wb") as f:
+                with open("asimmetric/private.pem", "wb") as f:
                     f.write(privada_banco)
 
                 # ? Se almacena la clave publica del banco en public.pem
                 publica_banco = llave.publickey().export_key()
-                with open("public.pem", "wb") as f:
+                with open("asimmetric/public.pem", "wb") as f:
                     f.write(publica_banco)
 
                 # ? Se obtiene la clave simétrica aleatoria de 32 bytes
                 key = get_key()
-                print(f"LLave simétrica aleatoria: {key}\n")
+                print(f"\nLlave simétrica aleatoria: {key}\n")
 
                 # ? Se cifra la clave simétrica usando la clave pública del banco
                 # Se obtiene la clave pública del banco
-                with open("public.pem", "rb") as f:
-                    publica = f.read()
+                with open("asimmetric/public.pem", "rb") as f:
+                    publica = open("asimmetric/public.pem", "rb").read()
                 key_cifrada = cifrado_asimetrico(publica, key)
-                print(f"LLave simétrica cifrada: {key_cifrada}\n")
+                print("Se comparte la llave simétrica a través del cifrado asimétrico\n")
+                print(f"Llave simétrica cifrada: {key_cifrada}\n")
 
                 # ? Se descifra la clave simétrica usando la clave privada del banco
                 # Se obtiene la clave privada del banco
-                with open("private.pem", "rb") as f:
+                with open("asimmetric/private.pem", "rb") as f:
                     privada = f.read()
                 key = descifrado_asimetrico(privada, key_cifrada, module)
-                print(f"LLave simétrica descifrada: {key}\n")
-
-                # ? Generamos las clave pública y privada para la firma digital
-                # Para ello usamos la curva elíptica secp256k1 (Bitcoin)
-                # Creamos la clave privada
-                priv_key = PrivateKey()
-                # Obtenemos la clave pública a partir de la privada
-                pub_key = priv_key.publicKey()
                 print(
-                    f"Clave privada secp256k1: {priv_key}\nClave pública secp256k1: {pub_key}\n")
+                    "Se descifra la llave simétrica compartida a través del cifrado asimétrico\n")
+                print(f"Llave simétrica descifrada: {key}\n")
 
-                # ? Usamos la clave pública del usuario para firmar el mensaje
-                signature = sign_msg(msg_b, priv_key)
-                # Transformamos la firma (obj) almacenada en un registro a base64 para imprimirla
-                print(f"Firma del mensaje: {signature.toBase64()}\n")
+                # ? Generamos las clave pública y privada para la firma digital del usuario
+                # Para ello usamos la curva elíptica secp256k1 (Bitcoin)
+                # Creamos la clave privada y publica a partir de la privada del usuario
+                priv_key = private_sign_key()
+                pub_key = public_sign_key(priv_key)
+
+                print(
+                    f"Clave privada del usuario:\n{open('certificate/priv_key.pem', 'r', encoding='utf-8').read()}")
+                print(
+                    f"Clave pública del usuario:\n{open('certificate/pub_key.pem', 'r', encoding='utf-8').read()}\n")
+
+                # ? Usamos la clave privada del usuario para firmar el mensaje
+                signature = sign_msg_cryptography(msg_b, priv_key)
+                print(f"Firma del mensaje: {signature}\n")
+
+                # ? Usamos la clave privada del usuario para certificar el mensaje
+                certificate_sign(priv_key, token_usuario)
 
                 # ? El mensaje del usuario es encriptado con la llave simetrica usando el modo EAX
                 mensaje_encriptado = cifrado_simetrico(key, msg_b)
@@ -98,8 +106,9 @@ def msg_retriever():
                 msg_b = descifrado_simetrico(key, mensaje_encriptado)
                 print(f"Mensaje descifrado: {msg_b}\n")
 
-                # ? Se verifica la firma del mensaje usando la clave pública del banco
-                verification = verify_signature(msg_b, signature, pub_key)
+                # ? El banco verifica la firma del mensaje usando la clave pública del usuario
+                verification = verify_sign_cryptography(
+                    msg_b, signature, pub_key)
                 # Si la firma es correcta, se continua con el proceso
                 # Se compara el hash del msg inicial con el hash del msg descifrado tras la firma
                 if verification:
@@ -109,6 +118,9 @@ def msg_retriever():
                 else:
                     print("La firma del mensaje ha resultado incorrecta\n")
                     return "La firma del mensaje es incorrecta: el mensaje ha sido modificado"
+
+                # ? El banco comprueba que el certificado del usuario es válido
+                verify_certificate_sign()
 
                 # ? Comprobamos que el mensaje sea un número (cantidad de dinero a ingresar)
                 if not msg_b.isnumeric():

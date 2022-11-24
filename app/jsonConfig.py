@@ -4,7 +4,7 @@ from pathlib import Path
 path = Path(__file__).parent.absolute()
 JSON_PATH = str(path).replace('\\', '/') + "/database.json"
 
-
+# Función para obtener el saldo del usuario
 def add_money(token, amount):
     """Función para añadir dinero al usuario"""
 
@@ -32,7 +32,7 @@ def add_money(token, amount):
     f.close()
     return money
 
-
+# Función para comparar el token (hasheado) del usuario
 def compare_hash(token):
     """Función para comparar el hash del token"""
     with open(JSON_PATH, "r", encoding="utf8") as f:
@@ -42,5 +42,19 @@ def compare_hash(token):
         if i["token"] == token:
             f.close()
             return True
+    f.close()
+    return False
+
+
+# Función para obtener el nombre del usuario
+def user_name(token):
+    """Función para obtener el nombre del usuario"""
+    with open(JSON_PATH, "r", encoding="utf8") as f:
+        data = json.load(f)
+
+    for i in data:
+        if i["token"] == token:
+            f.close()
+            return i["usuario"]
     f.close()
     return False
