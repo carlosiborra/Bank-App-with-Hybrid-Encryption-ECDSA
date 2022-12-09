@@ -158,6 +158,7 @@ def certificate_sign(priv_key, token):
     user_name = get_user_name(token)
 
     # El usuario es el emisor y el receptor del certificado
+    # Se crea un certificado auto firmado usando el formato X.509
     subject = issuer = x509.Name([
         x509.NameAttribute(NameOID.USER_ID, f"´{user_name}: {token}"),
         x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "España"),
@@ -186,7 +187,7 @@ def certificate_sign(priv_key, token):
         # ! Nuestro certificado será valido durante 30 minutos
         datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=30)
     ).add_extension(
-        # ! Definido para el localhost (tests
+        # ! Definido para el localhost (tests)
         x509.SubjectAlternativeName([x509.DNSName("localhost")]),
         critical=False,
         # ! Firmamos el certificado con nuestra llave privada

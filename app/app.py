@@ -109,7 +109,7 @@ def msg_retriever():
                 # ? El banco verifica la firma del mensaje usando la clave pública del usuario
                 verification = verify_sign_cryptography(
                     msg_b, signature, pub_key)
-                # Si la firma es correcta, se continua con el proceso
+                # Si la firma es correcta, se continúa con el proceso
                 # Se compara el hash del msg inicial con el hash del msg descifrado tras la firma
                 if verification:
                     print(
